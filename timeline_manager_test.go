@@ -44,8 +44,22 @@ func TestTimelineManagerDestroy(t *testing.T) {
         manager.Spawn()
         manager.destroy(1)
 
-        want := []int{}
-        AssertTimelines(t, manager.timelines, want)
+        AssertTimelines(t, manager.timelines, []int{})
+    })
+
+    t.Run("contract holes that are exposed to the right end", func (t *testing.T) {
+        manager := &TimelineManager{}
+
+        manager.Spawn()
+        manager.Spawn()
+        manager.Spawn()
+        manager.destroy(2)
+
+        AssertTimelines(t, manager.timelines, []int{1, 0, 3})
+
+        manager.destroy(3)
+
+        AssertTimelines(t, manager.timelines, []int{1})
     })
 }
 
