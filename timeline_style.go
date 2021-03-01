@@ -8,6 +8,9 @@ type TimelineStyle struct {
     StartTick string
     InterTick string
     FinalTick string
+
+    Tick map[TimelineState]string
+    Postfix map[TimelineState]string
 }
 
 var StyleASCII = &TimelineStyle{
@@ -15,7 +18,14 @@ var StyleASCII = &TimelineStyle{
     DashedPipe: "+",
     Dash: "-",
     Space: " ",
-    StartTick: "/",
-    InterTick: "}",
-    FinalTick: "\\",
+    Tick: map[TimelineState]string{
+        START: "/",
+        INPROGRESS: "}",
+        LASTWORDS: "\\",
+    },
+    Postfix: map[TimelineState]string{
+        START: "- ",
+        INPROGRESS: "- ",
+        LASTWORDS: "- ",
+    },
 }
