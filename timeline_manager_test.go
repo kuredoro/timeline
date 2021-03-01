@@ -75,17 +75,21 @@ func TestTimelineManagerFacets(t *testing.T) {
         Style: style,
     }
 
-    AssertFacets(t, manager, "", "")
+    AssertFacetsOfSingleChars(t, manager, "", "")
 
     manager.Spawn()
 
-    AssertFacets(t, manager, "|", "+")
+    AssertFacetsOfSingleChars(t, manager, "|", "+")
 
     manager.Spawn()
     manager.Spawn()
     manager.destroy(2)
 
-    AssertFacets(t, manager, "| |", "+-+")
+    AssertFacetsOfSingleChars(t, manager, "| |", "+-+")
+}
+
+func TestTimelineManagerPrint(t *testing.T) {
+
 }
 
 /*

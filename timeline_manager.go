@@ -1,7 +1,5 @@
 package timeline
 
-import "strings"
-
 // TimeManager will have sinks of type FormattedSink
 // It will have a func print(header, message)
 // It will be able to text wrap message how ever it likes
@@ -22,7 +20,7 @@ type TimelineManager struct {
     lastTimelineID int
 
     Style TimelineStyle
-    idleFacet, crossedFacet string
+    idleFacet, crossedFacet []string
 }
 
 func (tm *TimelineManager) Spawn() bool {
@@ -64,22 +62,22 @@ func (tm *TimelineManager) destroy(id int) {
     tm.generateFacets()
 }
 
-func (tm *TimelineManager) Facets() (string, string) {
+func (tm *TimelineManager) Facets() ([]string, []string) {
     return tm.idleFacet, tm.crossedFacet
 }
 
-func (tm *TimelineManager) generateFacet(present, absent string) string {
-    var str strings.Builder
+func (tm *TimelineManager) generateFacet(present, absent string) []string {
+    str := make([]string, len(tm.timelines))
 
-    for _, id := range tm.timelines {
+    for i, id := range tm.timelines {
         if id == 0 {
-            str.WriteString(absent)
+            str[i] = absent
         } else {
-            str.WriteString(present)
+            str[i] = present
         }
     }
 
-    return str.String()
+    return str
 }
 
 func (tm *TimelineManager) generateFacets() {
