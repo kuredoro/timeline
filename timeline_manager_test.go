@@ -64,24 +64,28 @@ func TestTimelineManagerDestroy(t *testing.T) {
 }
 
 func TestTimelineManagerFacets(t *testing.T) {
-    /*
     style := TimelineStyle{
         Pipe: "|",
         CrossedPipe: "+",
         WideMinus: "-",
+        Space: " ",
     }
 
-        gotIdle, gotCrossed = manager.Facets()
-        wantIdle, wantCrossed = "||||", "++++"
+    manager := &TimelineManager{
+        Style: style,
+    }
 
-        if gotIdle != wantIdle {
-            t.Errorf("got idle facet %q, want %q", gotIdle, wantIdle)
-        }
+    AssertFacets(t, manager, "", "")
 
-        if gotCrossed != wantCrossed {
-            t.Errorf("got crossed facet %q, want %q", gotCrossed, wantCrossed)
-        }
-        */
+    manager.Spawn()
+
+    AssertFacets(t, manager, "|", "+")
+
+    manager.Spawn()
+    manager.Spawn()
+    manager.destroy(2)
+
+    AssertFacets(t, manager, "| |", "+-+")
 }
 
 /*
