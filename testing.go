@@ -1,6 +1,8 @@
 package timeline
 
 import (
+	"fmt"
+	"io"
 	"reflect"
 	"strings"
 	"testing"
@@ -36,5 +38,22 @@ func AssertFacetsOfSingleChars(t *testing.T, manager *TimelineManager, wantIdleS
 
     if !reflect.DeepEqual(gotCrossed, wantCrossed) {
         t.Errorf("got crossed facet %#v, want %#v. timelines=%v", gotCrossed, wantCrossed, manager.timelines)
+    }
+}
+
+func AssertSinks(t *testing.T, sinks []io.Writer, wants ...string) {
+    t.Helper()
+
+    for i, sink := range sinks {
+        buf, ok := sink.(fmt.Stringer)
+        if !ok {
+            t.Errorf("sink #%d's output cannot be retrieved", i)
+            continue
+        }
+
+        got := buf.String()
+        if got != wants[i] {
+            t.Errorf("got sink #%d's output %q, want %q", i, got, wants[i])
+        }
     }
 }
