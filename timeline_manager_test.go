@@ -1,7 +1,9 @@
 package timeline
 
 import (
-    "testing"
+	"bytes"
+	"io"
+	"testing"
 )
 
 func TestTimelineManagerSpawn(t *testing.T) {
@@ -89,7 +91,36 @@ func TestTimelineManagerFacets(t *testing.T) {
 }
 
 func TestTimelineManagerPrint(t *testing.T) {
+    t.Run("no sinks", func(t *testing.T) {
+        manager := &TimelineManager{}
 
+        manager.print([]string{"|", "|"}, "hello")
+    })
+
+    t.Run("one sink", func(t *testing.T) {
+        buf := &bytes.Buffer{}
+
+        manager := &TimelineManager{
+            Sinks: []io.Writer{buf},
+        }
+
+        manager.print([]string{"|", "|"}, "hello")
+
+        AssertSinks(t, manager.Sinks, "||hello")
+    })
+    
+    t.Run("two sinks", func(t *testing.T) {
+        buf1 := &bytes.Buffer{}
+        buf2 := &bytes.Buffer{}
+
+        manager := &TimelineManager{
+            Sinks: []io.Writer{buf1, buf2},
+        }
+
+        manager.print([]string{"|", " ", "|", " "}, "test")
+
+        AssertSinks(t, manager.Sinks, "| | test", "| | test")
+    })
 }
 
 /*
