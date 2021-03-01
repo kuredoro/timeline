@@ -8,9 +8,17 @@ package timeline
 // I.e., transform the symbol for bar...
 //
 
+type TimelineStyle struct {
+    Pipe string
+    CrossedPipe string
+    WideMinus string
+}
+
 type TimelineManager struct {
     timelines []int
     lastTimelineID int
+
+    Style TimelineStyle
 }
 
 func (tm *TimelineManager) Spawn() bool {
@@ -30,4 +38,12 @@ func (tm *TimelineManager) Spawn() bool {
     }
 
     return false
+}
+
+func (tm *TimelineManager) destroy(id int) {
+    tm.timelines = []int{}
+}
+
+func (tm *TimelineManager) Facets() (string, string) {
+    return "||||", "++++"
 }
