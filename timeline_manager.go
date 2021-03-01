@@ -41,7 +41,19 @@ func (tm *TimelineManager) Spawn() bool {
 }
 
 func (tm *TimelineManager) destroy(id int) {
-    tm.timelines = []int{}
+    for i := range tm.timelines {
+        if tm.timelines[i] == id {
+            tm.timelines[i] = 0
+            break
+        }
+    }
+
+    lastNonZero := len(tm.timelines) - 1
+    for lastNonZero >= 0 && tm.timelines[lastNonZero] == 0 {
+        lastNonZero--
+    }
+
+    tm.timelines = tm.timelines[:lastNonZero+1]
 }
 
 func (tm *TimelineManager) Facets() (string, string) {
