@@ -41,6 +41,15 @@ func AssertFacetsOfSingleChars(t *testing.T, manager *TimelineManager, wantIdleS
     }
 }
 
+func AssertSink(t *testing.T, sink fmt.Stringer, want string) {
+    t.Helper()
+
+    got := sink.String()
+    if got != want {
+        t.Errorf("got sink output %q, want %q", got, want)
+    }
+}
+
 func AssertSinks(t *testing.T, sinks []io.Writer, wants ...string) {
     t.Helper()
 

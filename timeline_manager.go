@@ -13,24 +13,17 @@ import (
 // I.e., transform the symbol for bar...
 //
 
-type TimelineStyle struct {
-    Pipe string
-    CrossedPipe string
-    WideMinus string
-    Space string
-}
-
 type TimelineManager struct {
     timelines []int
     lastTimelineID int
 
-    Style TimelineStyle
+    Style *TimelineStyle
     idleFacet, crossedFacet []string
 
     Sinks []io.Writer
 }
 
-func (tm *TimelineManager) Spawn() bool {
+func (tm *TimelineManager) Spawn() *Timeline {
     firstZero := 0
     for ; firstZero < len(tm.timelines); firstZero++ {
         if tm.timelines[firstZero] == 0 {
@@ -48,7 +41,10 @@ func (tm *TimelineManager) Spawn() bool {
 
     tm.generateFacets()
 
-    return false
+    return &Timeline{
+        manager: tm,
+        style: tm.Style,
+    }
 }
 
 func (tm *TimelineManager) destroy(id int) {
@@ -88,8 +84,12 @@ func (tm *TimelineManager) generateFacet(present, absent string) []string {
 }
 
 func (tm *TimelineManager) generateFacets() {
+    if tm.Style == nil {
+        return
+    }
+
     tm.idleFacet = tm.generateFacet(tm.Style.Pipe, tm.Style.Space)
-    tm.crossedFacet = tm.generateFacet(tm.Style.CrossedPipe, tm.Style.WideMinus)
+    tm.crossedFacet = tm.generateFacet(tm.Style.DashedPipe, tm.Style.Dash)
 }
 
 func (tm *TimelineManager) print(timelineHeader []string, msg string) {

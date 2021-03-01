@@ -66,15 +66,8 @@ func TestTimelineManagerDestroy(t *testing.T) {
 }
 
 func TestTimelineManagerFacets(t *testing.T) {
-    style := TimelineStyle{
-        Pipe: "|",
-        CrossedPipe: "+",
-        WideMinus: "-",
-        Space: " ",
-    }
-
     manager := &TimelineManager{
-        Style: style,
+        Style: StyleASCII,
     }
 
     AssertFacetsOfSingleChars(t, manager, "", "")
@@ -123,7 +116,3 @@ func TestTimelineManagerPrint(t *testing.T) {
     })
 }
 
-/*
-func TestTimelineManagerColumnGaps(t *testing.T) {
-}
-*/
