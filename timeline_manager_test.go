@@ -2,7 +2,6 @@ package timeline
 
 import (
     "testing"
-    "reflect"
 )
 
 func TestTimelineManagerSpawn(t *testing.T) {
@@ -12,9 +11,7 @@ func TestTimelineManagerSpawn(t *testing.T) {
         manager.Spawn()
 
         want := []int{1}
-        if !reflect.DeepEqual(manager.timelines, want) {
-            t.Errorf("got timelines %v, want %v", manager.timelines, want)
-        }
+        AssertTimelines(t, manager.timelines, want)
     })
 
     t.Run("spawn two timelines", func(t *testing.T) {
@@ -24,9 +21,7 @@ func TestTimelineManagerSpawn(t *testing.T) {
         manager.Spawn()
 
         want := []int{1, 2}
-        if !reflect.DeepEqual(manager.timelines, want) {
-            t.Errorf("got timelines %v, want %v", manager.timelines, want)
-        }
+        AssertTimelines(t, manager.timelines, want)
     })
 
     t.Run("spawn one when there's a hole between timelines", func(t *testing.T) {
@@ -38,9 +33,7 @@ func TestTimelineManagerSpawn(t *testing.T) {
         manager.Spawn()
 
         want := []int{1, 2, 5, 4}
-        if !reflect.DeepEqual(manager.timelines, want) {
-            t.Errorf("got timelines %v, want %v", manager.timelines, want)
-        }
+        AssertTimelines(t, manager.timelines, want)
     })
 }
 
@@ -52,9 +45,7 @@ func TestTimelineManagerDestroy(t *testing.T) {
         manager.destroy(1)
 
         want := []int{}
-        if !reflect.DeepEqual(manager.timelines, want) {
-            t.Errorf("got timelines %v, want %v", manager.timelines, want)
-        }
+        AssertTimelines(t, manager.timelines, want)
     })
 }
 
