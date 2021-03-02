@@ -44,7 +44,7 @@ func TestTimelineManagerDestroy(t *testing.T) {
         manager := &TimelineManager{}
 
         manager.Spawn()
-        manager.destroy(1)
+        manager.destroy(0)
 
         AssertTimelines(t, manager.timelines, []int{})
     })
@@ -55,13 +55,25 @@ func TestTimelineManagerDestroy(t *testing.T) {
         manager.Spawn()
         manager.Spawn()
         manager.Spawn()
-        manager.destroy(2)
+        manager.destroy(1)
 
         AssertTimelines(t, manager.timelines, []int{1, 0, 3})
 
-        manager.destroy(3)
+        manager.destroy(2)
 
         AssertTimelines(t, manager.timelines, []int{1})
+
+        manager.Spawn()
+        manager.Spawn()
+
+        manager.destroy(0)
+
+        AssertTimelines(t, manager.timelines, []int{0, 4, 5})
+
+        manager.destroy(2)
+        manager.destroy(1)
+
+        AssertTimelines(t, manager.timelines, []int{})
     })
 }
 
@@ -78,7 +90,7 @@ func TestTimelineManagerFacets(t *testing.T) {
 
     manager.Spawn()
     manager.Spawn()
-    manager.destroy(2)
+    manager.destroy(1)
 
     AssertFacetsOfSingleChars(t, manager, "| |", "+-+")
 }

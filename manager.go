@@ -18,7 +18,7 @@ type TimelineManager struct {
     lastTimelineID int
 
     Style *TimelineStyle
-    idleFacet, crossedFacet []string
+    idleFacet, dashedFacet []string
 
     Sinks []io.Writer
 }
@@ -44,16 +44,12 @@ func (tm *TimelineManager) Spawn() *Timeline {
     return &Timeline{
         manager: tm,
         style: tm.Style,
+        column: firstZero,
     }
 }
 
-func (tm *TimelineManager) destroy(id int) {
-    for i := range tm.timelines {
-        if tm.timelines[i] == id {
-            tm.timelines[i] = 0
-            break
-        }
-    }
+func (tm *TimelineManager) destroy(column int) {
+    tm.timelines[column] = 0
 
     lastNonZero := len(tm.timelines) - 1
     for lastNonZero >= 0 && tm.timelines[lastNonZero] == 0 {
@@ -66,7 +62,7 @@ func (tm *TimelineManager) destroy(id int) {
 }
 
 func (tm *TimelineManager) Facets() ([]string, []string) {
-    return tm.idleFacet, tm.crossedFacet
+    return tm.idleFacet, tm.dashedFacet
 }
 
 func (tm *TimelineManager) generateFacet(present, absent string) []string {
@@ -89,7 +85,7 @@ func (tm *TimelineManager) generateFacets() {
     }
 
     tm.idleFacet = tm.generateFacet(tm.Style.Pipe, tm.Style.Space)
-    tm.crossedFacet = tm.generateFacet(tm.Style.DashedPipe, tm.Style.Dash)
+    tm.dashedFacet = tm.generateFacet(tm.Style.DashedPipe, tm.Style.Dash)
 }
 
 func (tm *TimelineManager) print(timelineHeader []string, msg string) {
