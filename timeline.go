@@ -15,6 +15,7 @@ type Timeline struct {
     manager *TimelineManager
     style *TimelineStyle
 
+    column int
     state TimelineState
 }
 
@@ -26,14 +27,22 @@ func (t *Timeline) Println(args ...interface{}) {
     tick := t.style.Tick[t.state]
     postfix := t.style.Postfix[t.state]
 
+    idle, dashed := t.manager.Facets()
+
+    header := make([]string, t.column)
+    copy(header, idle[:t.column])
+    header = append(header, tick)
+    header = append(header, dashed[t.column+1:]...)
+
     msg := fmt.Sprintln(args...)
 
-    t.manager.print([]string{tick}, postfix + msg)
+    t.manager.print(header, postfix + msg)
 
     if t.state == START {
         t.state = INPROGRESS
     } else if t.state == LASTWORDS {
         t.state = FINISHED
+        t.manager.destroy(t.column)
     }
 }
 

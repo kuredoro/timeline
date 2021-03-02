@@ -40,4 +40,57 @@ func TestTimelineUseCases(t *testing.T) {
 
         timeline.AssertSink(t, buf, want)
     })
+
+    t.Run("2 timelines", func(t *testing.T) {
+        buf := &bytes.Buffer{}
+
+        manager := &timeline.TimelineManager{
+            Style: timeline.StyleASCII,
+            Sinks: []io.Writer{buf},
+        }
+
+        first := manager.Spawn()
+        first.Println("hello")
+
+        second := manager.Spawn()
+        second.Println("Hi")
+
+        first.Println("how's it goin'?")
+        second.Println("Awesome! Go is awesome!")
+
+        first.End()
+        first.Println("i hate go. bye.")
+
+        second.Println("Hmph.... ...What?")
+        second.Println("If they cease communication with people based on the language they like....")
+        second.Println("Then I'm blessed I won't have to deal with them.")
+
+        third := manager.Spawn()
+        third.Println("ugh... u stil here?")
+
+        second.End()
+        second.Println("No.")
+
+        third.Println("damn...")
+
+        third.End()
+        third.Println("okay")
+
+        want :=
+`/- hello
+|/- Hi
+}+- how's it goin'?
+|}- Awesome! Go is awesome!
+\+- i hate go. bye.
+ }- Hmph.... ...What?
+ }- If they cease communication with people based on the language they like....
+ }- Then I'm blessed I won't have to deal with them.
+/+- ugh... u stil here?
+|\- No.
+}- damn...
+\- okay
+`
+
+        timeline.AssertSink(t, buf, want)
+    })
 }
