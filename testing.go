@@ -45,8 +45,27 @@ func AssertSink(t *testing.T, sink fmt.Stringer, want string) {
     t.Helper()
 
     got := sink.String()
-    if got != want {
-        t.Errorf("got sink output %q, want %q", got, want)
+
+    gotLines := strings.Split(got, "\n")
+    wantLines := strings.Split(want, "\n")
+
+    commonSize := len(gotLines)
+    if len(wantLines) < commonSize {
+        commonSize = len(wantLines)
+    }
+
+    for i := 0; i < commonSize; i++ {
+        if gotLines[i] != wantLines[i] {
+            t.Errorf("got sink's line %d %q, want %q", i + 1, gotLines[i], wantLines[i])
+        }
+    }
+
+    for i := commonSize; i < len(gotLines); i++ {
+        t.Errorf("got sink's line %d %q, want none", i + 1, gotLines[i])
+    }
+
+    for i := commonSize; i < len(wantLines); i++ {
+        t.Errorf("expected sink's line %d %q, got none", i + 1, wantLines[i])
     }
 }
 
