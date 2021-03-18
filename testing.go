@@ -16,28 +16,25 @@ func AssertTimelines(t *testing.T, got, want []int) {
     }
 }
 
-func AssertFacetsOfSingleChars(t *testing.T, manager *TimelineManager, wantIdleStr, wantCrossedStr string) {
+func AssertFacets(t *testing.T, manager *TimelineManager, want FacetSet) {
     t.Helper()
 
-    wantIdle := strings.Split(wantIdleStr, "")
-    wantCrossed := strings.Split(wantCrossedStr, "")
+    got := manager.Facets()
 
-    if len(wantIdle) == 0 {
-        wantIdle = nil
+    if got, want := got.idle, want.idle; !reflect.DeepEqual(got, want) {
+        t.Errorf("got idle facet %#v, want %#v. timelines=%v", got, want, manager.timelines)
     }
 
-    if len(wantCrossed) == 0 {
-        wantCrossed = nil
+    if got, want := got.dashed[START], want.dashed[START]; !reflect.DeepEqual(got, want) {
+        t.Errorf("got dashed START facet %#v, want %#v. timelines=%v", got, want, manager.timelines)
     }
 
-    gotIdle, gotCrossed := manager.Facets()
-
-    if !reflect.DeepEqual(gotIdle, wantIdle) {
-        t.Errorf("got idle facet %#v, want %#v. timelines=%v", gotIdle, wantIdle, manager.timelines)
+    if got, want := got.dashed[INPROGRESS], want.dashed[INPROGRESS]; !reflect.DeepEqual(got, want) {
+        t.Errorf("got dashed INPROGRESS facet %#v, want %#v. timelines=%v", got, want, manager.timelines)
     }
 
-    if !reflect.DeepEqual(gotCrossed, wantCrossed) {
-        t.Errorf("got crossed facet %#v, want %#v. timelines=%v", gotCrossed, wantCrossed, manager.timelines)
+    if got, want := got.dashed[LASTWORDS], want.dashed[LASTWORDS]; !reflect.DeepEqual(got, want) {
+        t.Errorf("got dashed LASTWORDS facet %#v, want %#v. timelines=%v", got, want, manager.timelines)
     }
 }
 

@@ -27,12 +27,12 @@ func (t *Timeline) Println(args ...interface{}) {
     tick := t.style.Tick[t.state]
     postfix := t.style.Postfix[t.state]
 
-    idle, dashed := t.manager.Facets()
+    facets := t.manager.Facets()
 
     header := make([]string, t.column)
-    copy(header, idle[:t.column])
+    copy(header, facets.idle[:t.column])
     header = append(header, tick)
-    header = append(header, dashed[t.column+1:]...)
+    header = append(header, facets.dashed[t.state][t.column+1:]...)
 
     msg := fmt.Sprintln(args...)
 

@@ -78,21 +78,56 @@ func TestTimelineManagerDestroy(t *testing.T) {
 }
 
 func TestTimelineManagerFacets(t *testing.T) {
-    manager := &TimelineManager{
-        Style: StyleASCII,
+    style := &TimelineStyle{
+        Pipe: "| ",
+        Dash: "--",
+        Space: "  ",
+        DashedPipe: map[TimelineState]string{
+            START: "1-",
+            INPROGRESS: "2-",
+            LASTWORDS: "3-",
+        },
     }
 
-    AssertFacetsOfSingleChars(t, manager, "", "")
+    manager := &TimelineManager{
+        Style: style,
+    }
+
+    want := FacetSet{
+        idle: nil,
+        dashed: map[TimelineState][]string{
+            START: nil,
+            INPROGRESS: nil,
+            LASTWORDS: nil,
+        },
+    }
+    AssertFacets(t, manager, want)
 
     manager.Spawn()
 
-    AssertFacetsOfSingleChars(t, manager, "|", "+")
+    want = FacetSet{
+        idle: []string{"| "},
+        dashed: map[TimelineState][]string{
+            START: {"1-"},
+            INPROGRESS: {"2-"},
+            LASTWORDS: {"3-"},
+        },
+    }
+    AssertFacets(t, manager, want)
 
     manager.Spawn()
     manager.Spawn()
     manager.destroy(1)
 
-    AssertFacetsOfSingleChars(t, manager, "| |", "+-+")
+    want = FacetSet{
+        idle: []string{"| ", "  ", "| "},
+        dashed: map[TimelineState][]string{
+            START: {"1-", "--", "1-"},
+            INPROGRESS: {"2-", "--", "2-"},
+            LASTWORDS: {"3-", "--", "3-"},
+        },
+    }
+    AssertFacets(t, manager, want)
 }
 
 func TestTimelineManagerPrint(t *testing.T) {
@@ -127,4 +162,3 @@ func TestTimelineManagerPrint(t *testing.T) {
         AssertSinks(t, manager.Sinks, "| | test", "| | test")
     })
 }
-

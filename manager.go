@@ -5,6 +5,11 @@ import (
     "io"
 )
 
+type FacetSet struct {
+    idle []string
+    dashed map[TimelineState][]string
+}
+
 // TimeManager will have sinks of type FormattedSink
 // It will have a func print(header, message)
 // It will be able to text wrap message how ever it likes
@@ -18,7 +23,7 @@ type TimelineManager struct {
     lastTimelineID int
 
     Style *TimelineStyle
-    idleFacet, dashedFacet []string
+    facets FacetSet
 
     Sinks []io.Writer
 }
@@ -61,8 +66,8 @@ func (tm *TimelineManager) destroy(column int) {
     tm.generateFacets()
 }
 
-func (tm *TimelineManager) Facets() ([]string, []string) {
-    return tm.idleFacet, tm.dashedFacet
+func (tm *TimelineManager) Facets() FacetSet {
+    return tm.facets
 }
 
 func (tm *TimelineManager) generateFacet(present, absent string) []string {
@@ -84,8 +89,15 @@ func (tm *TimelineManager) generateFacets() {
         return
     }
 
-    tm.idleFacet = tm.generateFacet(tm.Style.Pipe, tm.Style.Space)
-    tm.dashedFacet = tm.generateFacet(tm.Style.DashedPipe, tm.Style.Dash)
+    tm.facets.idle = tm.generateFacet(tm.Style.Pipe, tm.Style.Space)
+
+    if tm.facets.dashed == nil {
+        tm.facets.dashed = make(map[TimelineState][]string)
+    }
+
+    for k, v := range tm.Style.DashedPipe {
+        tm.facets.dashed[k] = tm.generateFacet(v, tm.Style.Dash)
+    }
 }
 
 func (tm *TimelineManager) print(timelineHeader []string, msg string) {
