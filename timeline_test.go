@@ -32,10 +32,10 @@ func TestTimelineUseCases(t *testing.T) {
         tl.Println("ignore me also, hehe")
 
         want :=
-`/- start 1
+`/-- start 1
 }- middle 2
 }- another middle 1 2 3
-\- last words
+\__ last words
 `
 
         timeline.AssertSink(t, buf, want)
@@ -77,18 +77,75 @@ func TestTimelineUseCases(t *testing.T) {
         third.Println("okay")
 
         want :=
-`/- hello
-|/- Hi
+`/-- hello
+|/-- Hi
 }+- how's it goin'?
 |}- Awesome! Go is awesome!
-\+- i hate go. bye.
+\+__ i hate go. bye.
  }- Hmph.... ...What?
  }- If they cease communication with people based on the language they like....
  }- Then I'm blessed I won't have to deal with them.
-/+- ugh... u stil here?
-|\- No.
+/+-- ugh... u stil here?
+|\__ No.
 }- damn...
-\- okay
+\__ okay
+`
+
+        timeline.AssertSink(t, buf, want)
+    })
+
+    t.Run("3 timelines", func(t *testing.T) {
+        buf := &bytes.Buffer{}
+
+        manager := &timeline.TimelineManager{
+            Style: timeline.StyleASCII,
+            Sinks: []io.Writer{buf},
+        }
+
+        first := manager.Spawn()
+        first.Println("a")
+
+        second := manager.Spawn()
+        second.Println("b")
+
+        third := manager.Spawn()
+        third.Println("c")
+
+        first.Println("d")
+
+        second.End()
+        second.Println("e")
+
+        first.Println("f")
+        third.Println("z")
+
+        second2 := manager.Spawn()
+        second2.Println("g")
+
+        first.End()
+        first.Println("h")
+
+        second2.Println("i")
+
+        third.End()
+        third.Println("j")
+
+        second2.End()
+        second2.Println("k")
+
+        want :=
+`/-- a
+|/-- b
+||/-- c
+}++- d
+|\+__ e
+}-+- f
+| }- z
+|/+-- g
+\++__ h
+ }+- i
+ |\__ j
+ \__ k
 `
 
         timeline.AssertSink(t, buf, want)
