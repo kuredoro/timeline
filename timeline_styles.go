@@ -52,6 +52,27 @@ var StyleDefault = &TimelineStyle{
     },
 }
 
+var StyleWide = &TimelineStyle{
+    Pipe: "│ ",
+    Dash: "──",
+    Space: "  ",
+    DashedPipe: map[TimelineState]string{
+        START: "┼─",
+        INPROGRESS: "┼─",
+        LASTWORDS: "┼─",
+    },
+    Tick: map[TimelineState]string{
+        START: "┌─",
+        INPROGRESS: "├─",
+        LASTWORDS: "└─",
+    },
+    Postfix: map[TimelineState]string{
+        START: "── ",
+        INPROGRESS: "─  ",
+        LASTWORDS: "── ",
+    },
+}
+
 var StyleEdgesBold = &TimelineStyle{
     Pipe: "│",
     Dash: "─",
@@ -67,9 +88,9 @@ var StyleEdgesBold = &TimelineStyle{
         LASTWORDS: "╘",
     },
     Postfix: map[TimelineState]string{
-        START: "═",
+        START: "═ ",
         INPROGRESS: "╴ ",
-        LASTWORDS: "═",
+        LASTWORDS: "═ ",
     },
 }
 
